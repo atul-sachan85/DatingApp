@@ -1,0 +1,18 @@
+Dotnet:
+dotnet new list
+dotnet new sln --name <DatingApp>
+dotnet new webapi --name <DatingApp.Api>
+dotnet sln add <DatingApp.Api>
+dotnet run --project <DatingApp.Api>(http mode)
+dotnet run -ls https --project <DatingApp.Api>(https mode)
+
+EF Cli:
+dotnet tool list -g
+dotnet tool install/update --global dotnet-ef --version 7.0.2
+dotnet ef migrations add <InitialCreate> -o <folderLocation>
+dotnet ef migrations list
+dotnet ef migrations script
+dotnet ef dbcontext info
+dotnet ef dbcontext scaffold
+dotnet ef database drop
+dotnet ef database update
