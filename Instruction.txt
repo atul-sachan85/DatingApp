@@ -16,3 +16,11 @@ dotnet ef dbcontext info
 dotnet ef dbcontext scaffold
 dotnet ef database drop
 dotnet ef database update
+
+
+Add snippet in Angular.json file under serve section->
+"options": {
+    "sslCert": "./ssl/server.crt",
+    "sslKey": "./ssl/server.key",
+    "ssl": true
+},
