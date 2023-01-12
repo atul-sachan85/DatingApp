@@ -5,6 +5,7 @@ dotnet new webapi --name <DatingApp.Api>
 dotnet sln add <DatingApp.Api>
 dotnet run --project <DatingApp.Api>(http mode)
 dotnet run -ls https --project <DatingApp.Api>(https mode)
+dotnet watch --no-hot-reload -lp api --project DatingApp.Api (For attaching Debugger)
 
 EF Cli:
 dotnet tool list -g
