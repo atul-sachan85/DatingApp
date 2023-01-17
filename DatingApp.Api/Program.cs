@@ -1,5 +1,6 @@
 using System.Text;
 using DatingApp.Api.Extensions;
+using DatingApp.Api.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,13 +15,15 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
 //     app.UseSwagger();
 //     app.UseSwaggerUI();
 // }
+
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
 
 // app.UseHttpsRedirection();
 app.UseAuthentication();
