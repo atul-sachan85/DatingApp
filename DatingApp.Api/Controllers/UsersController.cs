@@ -1,5 +1,8 @@
+using AutoMapper;
 using DatingApp.Api.Data;
+using DatingApp.Api.DTOs;
 using DatingApp.Api.Entities;
+using DatingApp.Api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,26 +13,37 @@ namespace DatingApp.Api.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext context;
+        private readonly IUserRepository repository;
+        private readonly IMapper mapper;
 
-        public UsersController(DataContext context)
+        public UsersController(IUserRepository repository, IMapper mapper)
         {
-            this.context = context;
+            this.mapper = mapper;
+            this.repository = repository;
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var users = await this.context.Users.ToListAsync();
-            return users;
+            var users = await repository.GetUsersAsync();
+            return Ok(mapper.Map<IEnumerable<MemberDto>>(users));
+            //return Ok(await repository.GetMembersAsync());
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<AppUser>> GetUser(int id)
+        // {
+        //     var user = await repository.GetUserByIdAsync(id);
+        //     return Ok(user);
+        // }
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
-            var user = await this.context.Users.FindAsync(id);
-            return user;
+
+            var user = await repository.GetUserByUsernameAsync(username);
+            return Ok(mapper.Map<MemberDto>(user));
+            //return Ok(await repository.GetMemberByUsernameAsync(username));
         }
 
     }
