@@ -1,15 +1,25 @@
+import { MembersService } from './../../_services/members.service';
+import { Member } from './../../_models/member';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-member-list',
   templateUrl: './member-list.component.html',
-  styleUrls: ['./member-list.component.css']
+  styleUrls: ['./member-list.component.css'],
 })
 export class MemberListComponent implements OnInit {
-
-  constructor() { }
+  members: Member[] = [];
+  constructor(private memberService: MembersService) {}
 
   ngOnInit(): void {
+    this.loadMembers();
   }
 
+  loadMembers() {
+    this.memberService.getMembers().subscribe({
+      next: (members: Member[]) => {
+        this.members = members;
+      },
+    });
+  }
 }
