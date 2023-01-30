@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
+import { MembersService } from '../_services/members.service';
 
 @Component({
   selector: 'app-nav',
@@ -16,6 +17,7 @@ export class NavComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
+    //private memberService: MembersService,
     private router: Router,
     private toastr: ToastrService
   ) {}
@@ -26,7 +28,10 @@ export class NavComponent implements OnInit {
 
   login() {
     this.accountService.login(this.model).subscribe({
-      next: (response) => this.router.navigateByUrl('/members'), //,
+      next: (response) => {
+        //this.memberService.resetUserParams();
+        this.router.navigateByUrl('/members');
+      }, 
       //error: (error) => this.toastr.error(error.error),
     });
   }
