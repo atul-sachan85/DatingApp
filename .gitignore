@@ -399,3 +399,4 @@ FodyWeavers.xsd
 DatingApp.Api/appsettings.json
 .vscode/launch.json
 .vscode/tasks.json
+.prettierignore

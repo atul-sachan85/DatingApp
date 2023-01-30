@@ -4,6 +4,7 @@ using DatingApp.Api.Data;
 using DatingApp.Api.DTOs;
 using DatingApp.Api.Entities;
 using DatingApp.Api.Extensions;
+using DatingApp.Api.Helpers;
 using DatingApp.Api.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,11 +28,21 @@ namespace DatingApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var users = await repository.GetUsersAsync();
-            return Ok(mapper.Map<IEnumerable<MemberDto>>(users));
-            //return Ok(await repository.GetMembersAsync());
+            // var users = await repository.GetUsersAsync();
+            // return Ok(mapper.Map<IEnumerable<MemberDto>>(users));
+
+            var currentUser = await repository.GetMemberByUsernameAsync(User.GetUsername());
+            userParams.CurrentUsername = currentUser.UserName;
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = currentUser.Gender == "male" ? "female" : "male";
+            }
+
+            var users = await repository.GetMembersAsync(userParams);
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+            return Ok(await repository.GetMembersAsync(userParams));
         }
 
         // [HttpGet("{id}")]
