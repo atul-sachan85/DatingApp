@@ -1,12 +1,16 @@
 import { MembersService } from './../../_services/members.service';
 import { Member } from './../../_models/member';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   NgxGalleryImage,
   NgxGalleryOptions,
   NgxGalleryAnimation,
 } from '@kolkov/ngx-gallery';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { MessageService } from 'src/app/_services/message.service';
+import { Message } from 'src/app/_models/message';
+import { User } from 'src/app/_models/user';
 
 @Component({
   selector: 'app-member-detail',
@@ -14,16 +18,28 @@ import {
   styleUrls: ['./member-detail.component.css'],
 })
 export class MemberDetailComponent implements OnInit {
+  @ViewChild('memberTabs', {static: true}) memberTabs?: TabsetComponent;
   member: Member | undefined;
   galleryOptions: NgxGalleryOptions[] = [];
   galleryImages: NgxGalleryImage[] = [];
+  activeTab?: TabDirective;
+  messages: Message[] = [];
+  user?: User;
+  
   constructor(
     private memberService: MembersService,
+    private messageService: MessageService, 
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loadMember();
+    this.route.queryParams.subscribe({
+      next: params =>{
+        params['tab'] && this.selectTab(params['tab']) 
+      }
+    })
+
     this.galleryOptions = [
       {
         width: '500px',
@@ -59,5 +75,26 @@ export class MemberDetailComponent implements OnInit {
         this.galleryImages = this.getImages();
       },
     });
+  }
+
+  selectTab(heading: string) {
+    if (this.memberTabs) {
+      this.memberTabs.tabs.find(x => x.heading === heading)!.active = true
+    }
+  }
+
+  loadMessages() {
+    if (this.member) {
+      this.messageService.getMessageThread(this.member.userName).subscribe({
+        next: messages => this.messages = messages
+      })
+    }
+  }
+
+  onTabActivated(data: TabDirective) {
+    this.activeTab = data;
+    if (this.activeTab.heading === 'Messages') {
+      this.loadMessages();
+    } 
   }
 }
